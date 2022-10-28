@@ -1,5 +1,5 @@
 # Network & Security Health-Check Tool
-Stepping back some years ago (when Ansible was still crawling) and due the lack of open-source options to manage network & security configurations upon routers, switches, wlan-controllers, firewalls and almost all the appliances driven by a "cli - command line interface", that I decided to create a tool named as <b>"Network & Security Health-Check Tool"</b>.
+Stepping back some years ago (when Ansible was still crawling) and due the lack of open-source options to manage network & security configurations upon routers, switches, wlan-controllers, firewalls and almost all the appliances driven by a "cli - command line interface", I decided to create a tool named as <b>"Network & Security Health-Check Tool"</b>.
 
 This tool essentially can:
 - connect via ssh upon target devices, issue commands and track the output on separate files;
