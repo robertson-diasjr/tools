@@ -10,7 +10,7 @@ Dias desses me peguei nessa situação e visando facilitar a vida de muitos como
 - `pip install selenium`
 - `pip install openpyxl`
 - `pip install html5lib`
-- 1`pip install <qualquer biblioteca que por ventura venha a faltar quando você rodar :-)>`
+- `pip install <qualquer biblioteca que por ventura venha a faltar quando você rodar :-)>`
 
 ## Idéias
 - Uma vez os dados estando no Pandas, você pode "brincar" com qualquer tipo de análise (sum, mean, etc) e extrair dados para sua análise
