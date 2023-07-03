@@ -3,14 +3,19 @@ Geralmente obter informações consolidadas para análises financeiras nem sempr
 
 Dias desses me peguei nessa situação e visando facilitar a vida de muitos como Eu (profissionais de outras áreas que não financeira), compartilho esses códigos escritos em Python que tem por objetivo extrair em planilhas informações de FII - Fundos de Investimentos Imobiliários a partir das 2 principais plataformas no Brasil: Clube FII e FundsExplorer.
 
+1. Azure Platform
+    - Option 1:
+        - extract the Azure CLI commands within "build.ps1" and execute as you prefer
+    - Option 2:
+        - download the script "build.ps1" and run within a powershell. I.e.: `.\build.ps1`
 ## Pré-Requisitos
-- Python e bibliotecas
-`pip install pandas`
-`pip install requests`
-`pip install selenium`
-`pip install openpyxl`
-`pip install html5lib`
-`pip install <qualquer biblioteca que por ventura venha a faltar quando você rodar :-)>`
+    -   Pyhton e blibliotecas instaladas
+        - `pip install pandas`
+        - `pip install requests`
+        - `pip install selenium`
+        - `pip install openpyxl`
+        - `pip install html5lib`
+        - `pip install <qualquer biblioteca que por ventura venha a faltar quando você rodar :-)>`
 
 ## Idéias
 - Uma vez os dados estando no Pandas, você pode "brincar" com qualquer tipo de análise (sum, mean, etc) e extrair dados para sua análise
