@@ -40,9 +40,6 @@ table.rename(columns=lambda x: x.replace('R$', ''), inplace=True)
 # Replace whitespace with underscore
 table.rename(columns=lambda x: x.replace(' ', '_'), inplace=True)
 
-# Remove underscore in the end of strings
-table.columns = table.columns.str.rstrip('_')
-
 # Remove .
 table.rename(columns=lambda x: x.replace('.', ''), inplace=True)
 
@@ -52,6 +49,9 @@ table.rename(columns=lambda x: x.replace(')', ''), inplace=True)
 
 # Uppercase all the names
 table.columns = table.columns.str.upper()
+
+# Remove underscore in the end of strings
+table.columns = table.columns.str.rstrip('_')
 
 # Remove accents
 table.columns = [unidecode(col) for col in table.columns]
