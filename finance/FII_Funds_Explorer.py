@@ -33,8 +33,8 @@ driver.quit()
 table = table = pd.read_html(table_html, encoding='utf-8', thousands='.')[0]
 
 # Column normalization
-
-# Replace R$ with BRL (Brazilian currency)
+#
+# Remove R$ and %
 table.rename(columns=lambda x: x.replace('R$', ''), inplace=True)
 
 # Replace whitespace with underscore
@@ -56,6 +56,32 @@ table.columns = table.columns.str.rstrip('_')
 # Remove accents
 table.columns = [unidecode(col) for col in table.columns]
 
+# Rows and columns normalization
+#
+# Converting all to string for cleanup
+table = table.astype('string')
+
+# Number fix
+for column in table.columns:
+    table[column] = table[column].str.replace('.', '')
+    table[column] = table[column].str.replace(',', '.')
+
+# Remove %
+table = table.replace('%', '', regex=True)
+
+# Replace <NA> with 0
+table = table.fillna('0')
+
+# Converting to float64
+maintain_as_string = ['FUNDOS', 'SETOR']
+table = table.astype({col: 'float64' for col in table.columns if col not in maintain_as_string})
+
+# Export table to CSV
+# table.to_csv('FII_Funds_Explorer.csv', index=False)
+
+# Export table to Excel
+table.to_excel('FII_Funds_Explorer.xlsx', index=False)
+
 # SQLite function
 def export_to_sqlite():
     # Create a connection to the SQLite database
@@ -68,10 +94,5 @@ def export_to_sqlite():
     conn.close()
 
 # Export to SQLite
-# export_to_sqlite()
+#export_to_sqlite()
 
-# Export table to CSV
-# table.to_csv('FII_Funds_Explorer.csv', index=False)
-
-# Export table to Excel
-table.to_excel('FII_Funds_Explorer.xlsx', index=False)
