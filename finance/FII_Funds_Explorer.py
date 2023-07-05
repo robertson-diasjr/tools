@@ -94,5 +94,9 @@ def export_to_sqlite():
     conn.close()
 
 # Export to SQLite
-#export_to_sqlite()
-
+#try:
+#    export_to_sqlite()
+#    print("Successfully imported into SQLite")
+#except:
+#    print("Fail to import into SQLite")
+#exit()
