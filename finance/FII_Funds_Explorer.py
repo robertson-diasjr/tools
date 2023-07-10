@@ -30,7 +30,7 @@ table_html = table_element.get_attribute("outerHTML")
 driver.quit()
 
 # Read the HTML table into a Pandas DataFrame
-table = table = pd.read_html(table_html, encoding='utf-8', thousands='.')[0]
+table = pd.read_html(table_html, encoding='utf-8', thousands='.')[0]
 
 # Column normalization
 #
