@@ -1,13 +1,18 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# Modulos
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 import pandas as pd
 from unidecode import unidecode
+import requests
 import sqlite3
+import yfinance as yf
+from datetime import datetime, timedelta
+import matplotlib.pyplot as plt
 
 # Set up Selenium Chrome driver
 chrome_options = Options()
@@ -26,16 +31,15 @@ try:
 
     # Get the HTML content of the table
     table_html = table_element.get_attribute("outerHTML")
-    
     # Building the DataFramework
     table = pd.read_html(table_html, encoding='utf-8', thousands='.')[0]
 
     # Close the browser
     driver.quit()
-    print ("Page IFIX successfully loaded")
+    print ("URL IFIX successfully loaded")
 
 except:
-    print("Page IFIX failed")
+    print("URL IFIX failed")
 
 # Navigate to the URL to get all the segments
 try:
@@ -56,10 +60,10 @@ try:
         # Extracting the required tables
         table_segment = table_segment[['CÓDIGO', 'SEGMENTO']]
     
-    print ("Page Segment successfully loaded")
+    print ("URL Segment successfully loaded")
     
 except:
-    print("Page Segment failed")
+    print("URL Segment failed")
 
 # Column normalization
 #
@@ -82,6 +86,7 @@ table_segment.columns = [unidecode(col) for col in table_segment.columns]
 # Column naming
 table = table.rename(columns={"CODIGO_NEGOCIACAO": "CODIGO"})
 table = table.rename(columns={"VALOR_PATRIMONIAL_POR_COTA": "VALOR_COTA"})
+table = table.rename(columns={"COTACAO": "PRECO_COTA"})
 table = table.rename(columns={"IFIX_PARTICIPACAO_PERCENTUAL": "PARTICIPACAO_IFIX"})
 table = table.rename(columns={"LIQUIDEZ_MEDIA_DIARIA_MES_ATUAL": "LIQUIDEZ"})
 table = table.rename(columns={"YIELD_DE_DISTRIBUICAO_1_MES": "DY"})
@@ -93,51 +98,38 @@ table = table.rename(columns={"YIELD_DE_DISTRIBUICAO_12_MESES": "DY_12_MESES"})
 table = table.astype('string')
 table_segment = table_segment.astype('string')
 
+# Remove "R$" from all values across all columns
+table = table.applymap(lambda x: x.replace('R$', '') if isinstance(x, str) else x)
+
 # Number fix
 for column in table.columns:
-    table[column] = table[column].str.replace('R$', '')
     table[column] = table[column].str.replace('.', '')
     table[column] = table[column].str.replace(',', '.')
     table[column] = table[column].str.replace('%', '')
-    
+
 # Considering only the stock price instead of % up/down and date
-table['COTACAO'] = table['COTACAO'].str.split().str[0]
+table['PRECO_COTA'] = table['PRECO_COTA'].str.split().str[0]
 
 # Preserve original number format
 pd.set_option('display.float_format', '{:.2f}'.format)
 
 # Converting to float64
-no_changes = ['CODIGO', 'CODIGO_NEGOCIACAO', 'NOME', 'NOME_DO_FUNDO', 'DATA_IPO', 'ADMINISTRADOR', 'SEGMENTO', 'RELATORIOS_DE_ANALISE', 'FEED']
-table = table.astype({col: 'float64' for col in table.columns if col not in no_changes})
+to_float = ['PRECO_COTA', 'VALOR_PATRIMONIAL', 'VALOR_COTA', 'VALOR_DE_MERCADO', 'VARIACAO_DA_COTA_NO_ANO', 'DY', 'DY_12_MESES', 'P/VPA', 'QTDE_DE_COTISTAS', 'LIQUIDEZ', 'PARTICIPACAO_IFIX']
+table[to_float] = table[to_float].apply(pd.to_numeric, errors='coerce')
+table[to_float] = table[to_float].astype('float64')
 
 # Merging table
 merged_table = pd.merge(table, table_segment)
 
-# Changing display view
-display_order = ['CODIGO', 'SEGMENTO', 'COTACAO', 'P/VPA', 'VALOR_COTA', 'DY', 'DY_12_MESES', 'VALOR_DE_MERCADO', 'QTDE_DE_COTISTAS', 'LIQUIDEZ', 'PARTICIPACAO_IFIX', 'VARIACAO_DA_COTA_NO_ANO', 
-        'VALOR_PATRIMONIAL', 'NOME_DO_FUNDO', 'ADMINISTRADOR', 'DATA_IPO']
-
-display_view = merged_table[display_order]
-
 # Export table to Excel
-display_view.to_excel('FII_Clube.xlsx', index=False)
+def export_to_excel():
+    try:
+        file_to_excel = merged_table
+        output_file = "FII_Clube.xlsx"
+        file_to_excel.to_excel(output_file, index=False)
+        print ("Successfully exported to Excel")
+    except:
+        print ("Fail to export to Excel")
 
-# SQLite function
-def export_to_sqlite():
-    # Create a connection to the SQLite database
-    conn = sqlite3.connect('fii.db')
-
-    # Convert the pandas DataFrame into a SQLite table
-    table.to_sql('fii', conn, if_exists='replace', index=False)
-
-    # Close the database connection
-    conn.close()
-
-# Export to SQLite
-#try:
-#    export_to_sqlite()
-#    print("Successfully imported into SQLite")
-#except:
-#    print("Fail to import into SQLite")
-#    exit()
+export_to_excel()
 
