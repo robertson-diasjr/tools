@@ -2,23 +2,22 @@
 # coding: utf-8
 
 # Modulos
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
+# pip install openpyxl pandas unidecode yfinance matplotlib selenium webdriver-manager
 import pandas as pd
 from unidecode import unidecode
 import requests
-import sqlite3
 import yfinance as yf
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 
-# Set up Selenium Chrome driver
+# Set up Selenium 4 Chrome driver
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
 chrome_options = Options()
 chrome_options.add_argument("--headless=new")
-service = Service('C:\terraform\chromedriver.exe')
-driver = webdriver.Chrome(service=service, options=chrome_options)
+driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
 
 # Navigate to the URL to get all the accounts
 try:
