@@ -32,9 +32,6 @@ try:
     table_html = table_element.get_attribute("outerHTML")
     # Building the DataFramework
     table = pd.read_html(table_html, encoding='utf-8', thousands='.')[0]
-
-    # Close the browser
-    driver.quit()
     print ("URL IFIX successfully loaded")
 
 except:
@@ -58,7 +55,6 @@ try:
         table_segment = pd.read_html(request_segment.text, encoding='utf-8')[0]
         # Extracting the required tables
         table_segment = table_segment[['CÓDIGO', 'SEGMENTO']]
-    
     print ("URL Segment successfully loaded")
     
 except:
